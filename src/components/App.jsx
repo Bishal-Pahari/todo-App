@@ -1,56 +1,40 @@
 import React, { useState } from "react";
+import ToDoItem from "./ToDoItem";
+import InputArea from "./InputArea";
 
 function App() {
-  const [newText, setNewText] = useState("");
-  const [onPres, setOnPres] = useState(false);
-  const [newItems, setNewItems] = useState([]);
+  const [items, setItems] = useState([]);
 
-  const handleChange = (event) => {
-    const newValue = event.target.value;
-    setNewText(newValue);
-  };
+  function addItem(inputText) {
+    setItems((prevItems) => {
+      return [...prevItems, inputText];
+    });
+  }
 
-  const addItems = () => {
-    if (newText === "") {
-      setNewItems((prevItems) => {
-        return [...prevItems];
+  function deleteItem(id) {
+    setItems((prevItems) => {
+      return prevItems.filter((item, index) => {
+        return index !== id;
       });
-    } else {
-      setNewItems((prevItems) => {
-        return [...prevItems, newText];
-      });
-    }
-    setNewText("");
-  };
-
-  const handleStrike = (event) => {
-    // const test = event.target;
-    setOnPres(true);
-  };
+    });
+  }
 
   return (
     <div className="container">
       <div className="heading">
         <h1>To-Do List</h1>
       </div>
-      <div className="form">
-        <input onChange={handleChange} type="text" value={newText} />
-        <button onClick={addItems}>
-          <span>Add</span>
-        </button>
-      </div>
+      <InputArea onAdd={addItem} />
       <div>
         <ul>
-          {newItems.map((todoItems) => {
-            return (
-              <li
-                onClick={handleStrike}
-                style={{ textDecoration: onPres ? "line-through" : null }}
-              >
-                {todoItems}
-              </li>
-            );
-          })}
+          {items.map((todoItem, index) => (
+            <ToDoItem
+              key={index}
+              id={index}
+              text={todoItem}
+              onChecked={deleteItem}
+            />
+          ))}
         </ul>
       </div>
     </div>
